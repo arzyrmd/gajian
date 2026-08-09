@@ -6,32 +6,8 @@ use App\Http\Controllers\MonthlyCalculatorController;
 use App\Http\Controllers\TarifController;
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\Artisan;
-
 Route::get('/', function () {
     return redirect()->route('harian');
-});
-
-Route::get('/db-migrate', function () {
-    if (request('key') !== env('APP_KEY')) {
-        abort(403, 'Unauthorized');
-    }
-
-    try {
-        $output = '';
-        
-        $output .= "Running migrations...<br>";
-        Artisan::call('migrate', ['--force' => true]);
-        $output .= nl2br(Artisan::output()) . "<br>";
-
-        $output .= "Running seeders...<br>";
-        Artisan::call('db:seed', ['--force' => true]);
-        $output .= nl2br(Artisan::output()) . "<br>";
-
-        return $output . "<br>Database migration and seeding completed successfully!";
-    } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
-    }
 });
 
 // Guest Authentication Routes
