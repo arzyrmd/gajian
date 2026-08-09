@@ -2,6 +2,9 @@
 
 // Check if running on Vercel and create necessary storage directories in /tmp
 if (isset($_ENV['VERCEL'])) {
+    $_ENV['APP_DEBUG'] = 'true';
+    $_SERVER['APP_DEBUG'] = 'true';
+    
     $storageDirs = [
         '/tmp/storage/app/public',
         '/tmp/storage/framework/cache/data',
