@@ -7,6 +7,9 @@ use App\Http\Controllers\TarifController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (Illuminate\Support\Facades\Auth::check() && Illuminate\Support\Facades\Auth::user()->is_admin) {
+        return redirect()->route('monitoring');
+    }
     return redirect()->route('harian');
 });
 
@@ -33,6 +36,9 @@ Route::middleware('auth')->group(function () {
     // Tarif Configuration
     Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
     Route::post('/tarif', [TarifController::class, 'update'])->name('tarif.update');
+
+    // Monitoring Tab (Admin Only)
+    Route::get('/monitoring', [MonthlyCalculatorController::class, 'monitoring'])->name('monitoring');
 });
 
 Route::get('/php-info', function () {

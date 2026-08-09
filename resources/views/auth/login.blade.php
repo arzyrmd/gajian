@@ -83,24 +83,6 @@
                 </a>
             </div>
         </div>
-
-        <!-- Seeder Info Card -->
-        <div class="mt-8 bg-blue-50/50 rounded-2xl border border-blue-100 p-4.5 text-center">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-blue-800 mb-1">Akun Demo Default</h4>
-            <p class="text-xs text-blue-700 leading-normal mb-2">Gunakan akun berikut untuk pengujian cepat:</p>
-            <div class="grid grid-cols-2 gap-3 text-left">
-                <div class="bg-white rounded-xl p-2.5 border border-blue-100/50 text-[11px] shadow-sm">
-                    <span class="font-bold text-slate-700 block mb-0.5">Teknisi Lapangan</span>
-                    <span class="text-slate-500 block">Email: <strong class="text-blue-900 select-all">teknisi@gajian.com</strong></span>
-                    <span class="text-slate-500 block">Pass: <strong class="text-blue-900 select-all">password</strong></span>
-                </div>
-                <div class="bg-white rounded-xl p-2.5 border border-blue-100/50 text-[11px] shadow-sm">
-                    <span class="font-bold text-slate-700 block mb-0.5">Admin Gajian</span>
-                    <span class="text-slate-500 block">Email: <strong class="text-blue-900 select-all">admin@gajian.com</strong></span>
-                    <span class="text-slate-500 block">Pass: <strong class="text-blue-900 select-all">password</strong></span>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 @endsection

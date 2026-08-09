@@ -15,6 +15,10 @@ class DailyCalculatorController extends Controller
      */
     public function index(Request $request)
     {
+        if (Auth::user()->is_admin) {
+            return redirect()->route('monitoring');
+        }
+
         $userId = Auth::id();
         
         // Determine the date, default to today
@@ -103,6 +107,10 @@ class DailyCalculatorController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::user()->is_admin) {
+            return redirect()->route('monitoring');
+        }
+
         $userId = Auth::id();
         $dateInput = $request->input('tanggal');
 

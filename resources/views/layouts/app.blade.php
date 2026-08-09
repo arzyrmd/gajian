@@ -66,6 +66,7 @@
                     @auth
                     <!-- Desktop Tabs -->
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-4 items-center">
+                        @if(!Auth::user()->is_admin)
                         <a href="{{ route('harian') }}" 
                            class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('harian') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
                             <span class="flex items-center space-x-2">
@@ -80,12 +81,21 @@
                                 <span>Bulanan</span>
                             </span>
                         </a>
+                        @endif
+                        
                         @if(Auth::user()->is_admin)
+                        <a href="{{ route('monitoring') }}" 
+                           class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('monitoring') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                            <span class="flex items-center space-x-2">
+                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 20M3 11.627a1.125 1.125 0 011.096-1.058h15.808a1.125 1.125 0 011.096 1.058m-18 0A11.386 11.386 0 005.25 18M3 11.627A11.399 11.399 0 0110.25 8m0 0a11.399 11.399 0 015.25 3.627m-10.5 0h10.5M10.25 8v10M10.25 18a11.386 11.386 0 004.961-1.277m0 0l-4.961 1.277"></path></svg>
+                                <span>Monitoring Gaji</span>
+                            </span>
+                        </a>
                         <a href="{{ route('tarif.index') }}" 
                            class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 {{ request()->routeIs('tarif.index') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
                             <span class="flex items-center space-x-2">
                                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                <span>Tarif</span>
+                                <span>Kategori Tarif</span>
                             </span>
                         </a>
                         @endif
@@ -120,9 +130,9 @@
                             </div>
                         </button>
 
-                        <!-- Dropdown Menu Content -->
+                        <!-- Dropdown Menu Content (with transitions) -->
                         <div id="profile-dropdown-menu" 
-                             class="hidden absolute right-0 mt-2 w-56 rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50 py-1.5 z-50 transition-all duration-150">
+                             class="opacity-0 invisible scale-95 translate-y-[-10px] pointer-events-none transition-all duration-200 ease-out absolute right-0 mt-2 w-56 rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50 py-1.5 z-50">
                             <!-- User Header -->
                             <div class="px-4 py-2.5 border-b border-slate-100">
                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Masuk sebagai</p>
@@ -157,50 +167,60 @@
 
         <!-- Mobile Navigation Menu -->
         @auth
-        <div id="mobile-menu" class="hidden sm:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4">
-            <div class="space-y-1.5">
-                <a href="{{ route('harian') }}" 
-                   class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('harian') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"></path></svg>
-                    <span>Harian</span>
-                </a>
-                <a href="{{ route('bulanan') }}" 
-                   class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('bulanan') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>
-                    <span>Bulanan</span>
-                </a>
-                @if(Auth::user()->is_admin)
-                <a href="{{ route('tarif.index') }}" 
-                   class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('tarif.index') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span>Pengaturan Tarif</span>
-                </a>
-                @endif
-            </div>
+        <div id="mobile-menu" class="max-h-0 overflow-hidden opacity-0 transition-all duration-350 ease-in-out sm:hidden border-t border-slate-200 bg-white">
+            <div class="px-4 py-4 space-y-4">
+                <div class="space-y-1.5">
+                    @if(!Auth::user()->is_admin)
+                    <a href="{{ route('harian') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('harian') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"></path></svg>
+                        <span>Harian</span>
+                    </a>
+                    <a href="{{ route('bulanan') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('bulanan') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>
+                        <span>Bulanan</span>
+                    </a>
+                    @endif
 
-            <!-- Profile Info & Logout for Mobile -->
-            <div class="border-t border-slate-100 pt-4 mt-2">
-                <div class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50/50 rounded-2xl border border-slate-100/50 mb-3.5">
-                    <div class="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold shadow-sm">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="text-sm font-semibold text-slate-800 truncate leading-none">{{ Auth::user()->name }}</div>
-                        <div class="text-xs text-slate-500 truncate mt-1.5 leading-none">{{ Auth::user()->email }}</div>
-                    </div>
-                    <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider {{ Auth::user()->is_admin ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-blue-50 text-blue-600 border border-blue-100' }}">
-                        {{ Auth::user()->is_admin ? 'Admin' : 'Teknisi' }}
-                    </span>
+                    @if(Auth::user()->is_admin)
+                    <a href="{{ route('monitoring') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('monitoring') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0110.089 20M3 11.627a1.125 1.125 0 011.096-1.058h15.808a1.125 1.125 0 011.096 1.058m-18 0A11.386 11.386 0 005.25 18M3 11.627A11.399 11.399 0 0110.25 8m0 0a11.399 11.399 0 015.25 3.627m-10.5 0h10.5M10.25 8v10M10.25 18a11.386 11.386 0 004.961-1.277m0 0l-4.961 1.277"></path></svg>
+                        <span>Monitoring Gaji</span>
+                    </a>
+                    <a href="{{ route('tarif.index') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium {{ request()->routeIs('tarif.index') ? 'bg-blue-50 text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-50' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Kategori Tarif</span>
+                    </a>
+                    @endif
                 </div>
-                
-                <form action="{{ route('logout') }}" method="POST" class="block w-full">
-                    @csrf
-                    <button type="submit" 
-                            class="w-full text-center px-4 py-3 text-base font-semibold text-rose-600 hover:bg-rose-50/50 bg-rose-50 border border-rose-100 rounded-2xl transition-all duration-150 flex items-center justify-center space-x-2 cursor-pointer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"></path></svg>
-                        <span>Keluar</span>
-                    </button>
-                </form>
+
+                <!-- Profile Info & Logout for Mobile -->
+                <div class="border-t border-slate-100 pt-4 mt-2">
+                    <div class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50/50 rounded-2xl border border-slate-100/50 mb-3.5">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold shadow-sm">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-semibold text-slate-800 truncate leading-none">{{ Auth::user()->name }}</div>
+                            <div class="text-xs text-slate-500 truncate mt-1.5 leading-none">{{ Auth::user()->email }}</div>
+                        </div>
+                        <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider {{ Auth::user()->is_admin ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-blue-50 text-blue-600 border border-blue-100' }}">
+                            {{ Auth::user()->is_admin ? 'Admin' : 'Teknisi' }}
+                        </span>
+                    </div>
+
+                    <form action="{{ route('logout') }}" method="POST" class="block w-full">
+                        @csrf
+                        <button type="submit" 
+                                class="w-full text-center px-4 py-3 text-base font-semibold text-rose-600 hover:bg-rose-50/50 bg-rose-50 border border-rose-100 rounded-2xl transition-all duration-150 flex items-center justify-center space-x-2 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"></path></svg>
+                            <span>Keluar</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         @endauth
@@ -243,7 +263,14 @@
             event.stopPropagation();
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) {
-                menu.classList.toggle('hidden');
+                const isHidden = menu.classList.contains('opacity-0');
+                if (isHidden) {
+                    menu.classList.remove('opacity-0', 'invisible', 'scale-95', 'translate-y-[-10px]', 'pointer-events-none');
+                    menu.classList.add('opacity-100', 'visible', 'scale-100', 'translate-y-0', 'pointer-events-auto');
+                } else {
+                    menu.classList.add('opacity-0', 'invisible', 'scale-95', 'translate-y-[-10px]', 'pointer-events-none');
+                    menu.classList.remove('opacity-100', 'visible', 'scale-100', 'translate-y-0', 'pointer-events-auto');
+                }
             }
         }
 
@@ -251,7 +278,14 @@
             event.stopPropagation();
             const menu = document.getElementById('mobile-menu');
             if (menu) {
-                menu.classList.toggle('hidden');
+                const isClosed = menu.classList.contains('max-h-0');
+                if (isClosed) {
+                    menu.classList.remove('max-h-0', 'opacity-0');
+                    menu.classList.add('max-h-[500px]', 'opacity-100');
+                } else {
+                    menu.classList.add('max-h-0', 'opacity-0');
+                    menu.classList.remove('max-h-[500px]', 'opacity-100');
+                }
             }
         }
 
@@ -259,18 +293,20 @@
         window.addEventListener('click', function(e) {
             const profileMenu = document.getElementById('profile-dropdown-menu');
             const profileBtn = document.getElementById('profile-dropdown-btn');
-            if (profileMenu && !profileMenu.classList.contains('hidden')) {
+            if (profileMenu && !profileMenu.classList.contains('opacity-0')) {
                 if (profileBtn && !profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-                    profileMenu.classList.add('hidden');
+                    profileMenu.classList.add('opacity-0', 'invisible', 'scale-95', 'translate-y-[-10px]', 'pointer-events-none');
+                    profileMenu.classList.remove('opacity-100', 'visible', 'scale-100', 'translate-y-0', 'pointer-events-auto');
                 }
             }
 
             const mobileMenu = document.getElementById('mobile-menu');
             // Close mobile menu if clicked outside nav area (except buttons)
-            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            if (mobileMenu && !mobileMenu.classList.contains('max-h-0')) {
                 const nav = document.querySelector('nav');
                 if (nav && !nav.contains(e.target)) {
-                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.add('max-h-0', 'opacity-0');
+                    mobileMenu.classList.remove('max-h-[500px]', 'opacity-100');
                 }
             }
         });
