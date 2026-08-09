@@ -19,6 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
         $exceptions->report(function (\Throwable $e) {
-            error_log("=== ORIGINAL EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            header('Content-Type: text/plain');
+            echo "=== ORIGINAL EXCEPTION ===\n";
+            echo "Class: " . get_class($e) . "\n";
+            echo "Message: " . $e->getMessage() . "\n";
+            echo "File: " . $e->getFile() . "\n";
+            echo "Line: " . $e->getLine() . "\n";
+            echo "Trace:\n" . $e->getTraceAsString() . "\n";
+            exit(1);
         });
     })->create();
