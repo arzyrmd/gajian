@@ -34,3 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
     Route::post('/tarif', [TarifController::class, 'update'])->name('tarif.update');
 });
+
+Route::get('/php-info', function () {
+    return response()->json([
+        'php_version' => PHP_VERSION,
+        'extensions' => get_loaded_extensions(),
+    ]);
+});
