@@ -7,6 +7,10 @@
       "use": "vercel-php@0.7.2"
     },
     {
+      "src": "api/info.php",
+      "use": "vercel-php@0.7.2"
+    },
+    {
       "src": "public/**",
       "use": "@vercel/static"
     }
@@ -23,6 +27,10 @@
     {
       "src": "/robots.txt",
       "dest": "/public/robots.txt"
+    },
+    {
+      "src": "/info",
+      "dest": "/api/info.php"
     },
     {
       "src": "/(.*)",
