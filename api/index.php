@@ -64,5 +64,14 @@ if (isset($_GET['_test_db'])) {
     exit;
 }
 
+// Prepare writable directories and cache paths for Vercel read-only filesystem
+if (getenv('VERCEL')) {
+    if (!is_dir('/tmp/views')) {
+        mkdir('/tmp/views', 0755, true);
+    }
+    putenv('APP_SERVICES_CACHE=/tmp/services.php');
+    putenv('APP_PACKAGES_CACHE=/tmp/packages.php');
+}
+
 // Forward Vercel requests to Laravel's public/index.php
 require __DIR__ . '/../public/index.php';
