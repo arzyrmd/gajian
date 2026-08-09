@@ -23,7 +23,18 @@ if (isset($_GET['_test_db'])) {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_TIMEOUT => 5
         ]);
-        echo "SUCCESS: Connection established successfully!\n";
+        echo "SUCCESS: Connection established successfully!\n\n";
+        
+        echo "Tables in database:\n";
+        $stmt = $pdo->query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'");
+        $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        if (empty($tables)) {
+            echo "No tables found in public schema!\n";
+        } else {
+            foreach ($tables as $table) {
+                echo "- $table\n";
+            }
+        }
     } catch (\Throwable $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
         
@@ -34,7 +45,18 @@ if (isset($_GET['_test_db'])) {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_TIMEOUT => 5
             ]);
-            echo "SUCCESS (No SSL): Connection established successfully!\n";
+            echo "SUCCESS (No SSL): Connection established successfully!\n\n";
+            
+            echo "Tables in database:\n";
+            $stmt = $pdo->query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'");
+            $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            if (empty($tables)) {
+                echo "No tables found in public schema!\n";
+            } else {
+                foreach ($tables as $table) {
+                    echo "- $table\n";
+                }
+            }
         } catch (\Throwable $e2) {
             echo "ERROR (No SSL): " . $e2->getMessage() . "\n";
         }
