@@ -1,0 +1,9 @@
+.git
+.env
+/vendor
+/node_modules
+/public/build
+/database/*.sqlite
+/database/*.sqlite-journal
+Dockerfile
+docker/
