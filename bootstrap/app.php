@@ -20,8 +20,10 @@ $app = Application::configure(basePath: dirname(__DIR__))
         );
     })->create();
 
-if (env('VERCEL')) {
-    config(['view.compiled' => '/tmp/views']);
-}
+$app->booting(function () {
+    if (env('VERCEL')) {
+        config(['view.compiled' => '/tmp/views']);
+    }
+});
 
 return $app;
