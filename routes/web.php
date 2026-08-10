@@ -7,11 +7,10 @@ use App\Http\Controllers\TarifController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        return Auth::user()->is_admin 
+    if (auth()->check()) {
+        return auth()->user()->is_admin 
             ? redirect()->route('monitoring.index') 
             : redirect()->route('harian');
     }
@@ -30,7 +29,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Technician-only Routes
+    // Technician Only Routes
     Route::middleware('technician')->group(function () {
         // Daily Tab
         Route::get('/harian', [DailyCalculatorController::class, 'index'])->name('harian');
@@ -41,9 +40,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/bulanan/export', [MonthlyCalculatorController::class, 'exportCsv'])->name('bulanan.export');
     });
 
-    // Admin-only Routes
+    // Admin Only Routes
     Route::middleware('admin')->group(function () {
-        // Salary Monitoring
+        // Monitoring Tab
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         Route::get('/monitoring/{user}', [MonitoringController::class, 'show'])->name('monitoring.show');
 
@@ -53,7 +52,8 @@ Route::middleware('auth')->group(function () {
 
         // User Management
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::post('/users/{user}/toggle-role', [UserController::class, 'toggleRole'])->name('users.toggle-role');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });

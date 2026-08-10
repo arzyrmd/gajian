@@ -16,9 +16,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return Auth::user()->is_admin 
-                ? redirect()->route('monitoring.index') 
-                : redirect()->route('harian');
+            return $this->redirectBasedOnRole(Auth::user());
         }
         return view('auth.login');
     }
@@ -35,9 +33,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return Auth::user()->is_admin
-                ? redirect()->route('monitoring.index')
-                : redirect()->route('harian');
+            return $this->redirectBasedOnRole(Auth::user());
         }
 
         return back()->withErrors([
@@ -51,9 +47,7 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (Auth::check()) {
-            return Auth::user()->is_admin 
-                ? redirect()->route('monitoring.index') 
-                : redirect()->route('harian');
+            return $this->redirectBasedOnRole(Auth::user());
         }
         return view('auth.register');
     }
@@ -78,7 +72,15 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('harian');
+        return $this->redirectBasedOnRole($user);
+    }
+
+    /**
+     * Get redirect response based on user role.
+     */
+    protected function redirectBasedOnRole($user)
+    {
+        return $user->is_admin ? redirect()->route('monitoring.index') : redirect()->route('harian');
     }
 
     /**
