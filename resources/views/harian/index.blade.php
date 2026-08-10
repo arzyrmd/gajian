@@ -66,25 +66,61 @@
                         <!-- Quantities Input fields -->
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Berhasil</label>
-                                    <input type="number" 
-                                           name="pekerjaan[{{ $cat->id }}][berhasil]" 
-                                           value="{{ old('pekerjaan.'.$cat->id.'.berhasil', $cat->berhasil) }}" 
-                                           min="0" 
-                                           required
-                                           data-input-type="berhasil"
-                                           class="w-full text-center bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-semibold text-slate-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all duration-150">
+                                <div class="space-y-1.5">
+                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Berhasil</label>
+                                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl p-1 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:border-emerald-500 transition-all duration-150">
+                                        <!-- Minus Button -->
+                                        <button type="button" 
+                                                onclick="stepValue('{{ $cat->id }}', 'berhasil', -1)"
+                                                class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 active:scale-90 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer select-none">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15"></path></svg>
+                                        </button>
+                                        
+                                        <!-- Input Field -->
+                                        <input type="number" 
+                                               name="pekerjaan[{{ $cat->id }}][berhasil]" 
+                                               id="input-{{ $cat->id }}-berhasil"
+                                               value="{{ old('pekerjaan.'.$cat->id.'.berhasil', $cat->berhasil) }}" 
+                                               min="0" 
+                                               required
+                                               data-input-type="berhasil"
+                                               class="w-12 text-center bg-transparent border-0 py-1.5 text-sm font-bold text-slate-800 focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                        
+                                        <!-- Plus Button -->
+                                        <button type="button" 
+                                                onclick="stepValue('{{ $cat->id }}', 'berhasil', 1)"
+                                                class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 active:scale-90 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer select-none">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Gagal</label>
-                                    <input type="number" 
-                                           name="pekerjaan[{{ $cat->id }}][gagal]" 
-                                           value="{{ old('pekerjaan.'.$cat->id.'.gagal', $cat->gagal) }}" 
-                                           min="0" 
-                                           required
-                                           data-input-type="gagal"
-                                           class="w-full text-center bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm font-semibold text-slate-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-rose-500/10 focus:border-rose-500 transition-all duration-150">
+                                <div class="space-y-1.5">
+                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Gagal</label>
+                                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl p-1 focus-within:bg-white focus-within:ring-4 focus-within:ring-rose-500/10 focus-within:border-rose-500 transition-all duration-150">
+                                        <!-- Minus Button -->
+                                        <button type="button" 
+                                                onclick="stepValue('{{ $cat->id }}', 'gagal', -1)"
+                                                class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 active:scale-90 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer select-none">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15"></path></svg>
+                                        </button>
+                                        
+                                        <!-- Input Field -->
+                                        <input type="number" 
+                                               name="pekerjaan[{{ $cat->id }}][gagal]" 
+                                               id="input-{{ $cat->id }}-gagal"
+                                               value="{{ old('pekerjaan.'.$cat->id.'.gagal', $cat->gagal) }}" 
+                                               min="0" 
+                                               required
+                                               data-input-type="gagal"
+                                               class="w-12 text-center bg-transparent border-0 py-1.5 text-sm font-bold text-slate-800 focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                        
+                                        <!-- Plus Button -->
+                                        <button type="button" 
+                                                onclick="stepValue('{{ $cat->id }}', 'gagal', 1)"
+                                                class="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 active:scale-90 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer select-none">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -215,6 +251,19 @@
 
 <!-- JS Calculator Logic -->
 <script>
+    // Global function for stepper buttons
+    function stepValue(catId, type, delta) {
+        const input = document.getElementById(`input-${catId}-${type}`);
+        if (input) {
+            let val = parseInt(input.value) || 0;
+            val = Math.max(0, val + delta);
+            input.value = val;
+            
+            // Dispatch input event to trigger live totals calculation
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('daily-form');
         const cards = form.querySelectorAll('[data-category-id]');
