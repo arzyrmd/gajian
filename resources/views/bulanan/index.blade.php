@@ -8,20 +8,13 @@
     <!-- Page Header (hidden during printing to use custom print header) -->
     <div class="no-print flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                {{ $isViewingOther ? 'Detail Gaji Teknisi' : 'Rekap Bulanan' }}
-            </h1>
-            <p class="text-slate-500 mt-1">
-                {{ $isViewingOther ? 'Memonitoring rekapitulasi untuk ' . $targetUser->name : 'Akumulasi estimasi gajian dan volume pekerjaan Anda dalam satu bulan' }}
-            </p>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Rekap Bulanan</h1>
+            <p class="text-slate-500 mt-1">Akumulasi estimasi gajian dan volume pekerjaan Anda dalam satu bulan</p>
         </div>
 
         <div class="flex items-center gap-3">
             <!-- Selector Form -->
             <form action="{{ route('bulanan') }}" method="GET" class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
-                @if($isViewingOther)
-                    <input type="hidden" name="user_id" value="{{ $targetUser->id }}">
-                @endif
                 <span class="text-xs font-bold uppercase tracking-wider text-slate-400 pl-2">Periode:</span>
                 
                 <!-- Month Dropdown -->
@@ -45,8 +38,8 @@
     <div class="hidden print:block mb-8 border-b-2 border-slate-900 pb-4">
         <h1 class="text-2xl font-extrabold text-slate-900">REKAP ESTIMASI GAJIAN TEKNISI LAPANGAN</h1>
         <div class="mt-4 grid grid-cols-2 text-sm gap-2">
-            <div><strong>Nama Teknisi:</strong> {{ $targetUser->name }}</div>
-            <div><strong>Email:</strong> {{ $targetUser->email }}</div>
+            <div><strong>Nama Teknisi:</strong> {{ Auth::user()->name }}</div>
+            <div><strong>Email:</strong> {{ Auth::user()->email }}</div>
             <div><strong>Periode:</strong> {{ $months[$selectedMonth] }} {{ $selectedYear }}</div>
             <div><strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}</div>
         </div>
@@ -111,7 +104,7 @@
 
     <!-- Export & Print Action Buttons (hidden during printing) -->
     <div class="no-print mb-6 flex flex-wrap gap-3">
-        <a href="{{ route('bulanan.export', ['month' => $selectedMonth, 'year' => $selectedYear] + ($isViewingOther ? ['user_id' => $targetUser->id] : [])) }}" 
+        <a href="{{ route('bulanan.export', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" 
            class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-3 rounded-2xl shadow-sm hover:shadow active:scale-95 transition-all cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776"></path></svg>
             <span>Ekspor ke Excel (CSV)</span>
@@ -132,8 +125,7 @@
                 <h3 class="font-bold text-slate-800 text-base">Rekap Detail Per Kategori</h3>
             </div>
             
-            <!-- Desktop View: Table -->
-            <div class="hidden sm:block overflow-x-auto">
+            <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
@@ -186,46 +178,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Mobile View: Category Breakdown Cards -->
-            <div class="block sm:hidden p-4 space-y-4 no-print">
-                @forelse($rekap as $item)
-                <div class="bg-slate-50/50 rounded-2xl border border-slate-150 p-4 flex flex-col justify-between gap-3">
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm font-bold text-slate-800 leading-snug">{{ $item->nama_kategori }}</span>
-                        <span class="text-xs font-semibold text-slate-500">
-                            {{ $item->total_pekerjaan }} Tugas
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs pt-1.5 border-t border-slate-100">
-                        <div>
-                            <span class="text-slate-400">Sukses:</span>
-                            <strong class="text-emerald-600 ml-1">{{ $item->total_berhasil }}</strong>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">(Rp{{ number_format($item->tarif_berhasil, 0, ',', '.') }}/pcs)</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-400">Gagal:</span>
-                            <strong class="text-rose-600 ml-1">{{ $item->total_gagal }}</strong>
-                            @if($item->tarif_gagal > 0)
-                            <span class="text-[10px] text-slate-400 block mt-0.5">(Rp{{ number_format($item->tarif_gagal, 0, ',', '.') }}/pcs)</span>
-                            @else
-                            <span class="text-[10px] text-slate-400 block mt-0.5">(Rp0/pcs)</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center pt-2.5 mt-1 border-t border-slate-100">
-                        <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Subtotal</span>
-                        <strong class="text-sm font-extrabold text-blue-600">
-                            Rp{{ number_format($item->total_gaji, 0, ',', '.') }}
-                        </strong>
-                    </div>
-                </div>
-                @empty
-                <div class="text-center py-6 text-slate-400 text-sm">
-                    Belum ada data pekerjaan di bulan ini.
-                </div>
-                @endforelse
-            </div>
         </div>
 
         <!-- Table Card: Daily List Drill-down -->
@@ -234,8 +186,7 @@
                 <h3 class="font-bold text-slate-800 text-base">Rincian Per Tanggal</h3>
             </div>
             
-            <!-- Desktop View: Table -->
-            <div class="hidden sm:block overflow-x-auto">
+            <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
@@ -244,9 +195,7 @@
                             <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Jumlah Gagal</th>
                             <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Total Volume Pekerjaan</th>
                             <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Gaji Harian</th>
-                            @if(!$isViewingOther)
                             <th scope="col" class="no-print px-6 py-3 text-center text-xs font-bold text-slate-400 uppercase tracking-wider">Aksi</th>
-                            @endif
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-150">
@@ -267,7 +216,6 @@
                             <td class="px-6 py-4.5 whitespace-nowrap text-sm text-right font-extrabold text-slate-900">
                                 Rp{{ number_format($day->total_gaji, 0, ',', '.') }}
                             </td>
-                            @if(!$isViewingOther)
                             <td class="no-print px-6 py-4.5 whitespace-nowrap text-center text-sm font-semibold">
                                 <a href="{{ route('harian', ['tanggal' => $day->tanggal->toDateString()]) }}" 
                                    class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1">
@@ -275,60 +223,16 @@
                                     <span>Buka / Edit</span>
                                 </a>
                             </td>
-                            @endif
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="{{ $isViewingOther ? 5 : 6 }}" class="px-6 py-12 text-center text-slate-400 text-sm">
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 text-sm">
                                 Belum ada rincian pengerjaan harian.
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Mobile View: Daily Breakdown Cards -->
-            <div class="block sm:hidden p-4 space-y-3 no-print">
-                @forelse($dailyBreakdown as $day)
-                <div class="bg-slate-50/50 rounded-2xl border border-slate-150 p-4 flex flex-col justify-between gap-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-bold text-slate-800">{{ $day->tanggal->translatedFormat('d F Y') }}</span>
-                        <span class="text-xs font-semibold text-slate-500">{{ $day->total_pekerjaan }} Tugas</span>
-                    </div>
-                    <div class="flex justify-between items-center text-xs pt-1.5 border-t border-slate-100">
-                        <div class="flex space-x-3">
-                            <div>
-                                <span class="text-slate-400">Sukses:</span>
-                                <strong class="text-emerald-600 ml-0.5">{{ $day->total_berhasil }}</strong>
-                            </div>
-                            <div>
-                                <span class="text-slate-400">Gagal:</span>
-                                <strong class="text-rose-600 ml-0.5">{{ $day->total_gagal }}</strong>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] text-slate-400 block">Gaji Harian</span>
-                            <strong class="text-sm font-extrabold text-slate-900">
-                                Rp{{ number_format($day->total_gaji, 0, ',', '.') }}
-                            </strong>
-                        </div>
-                    </div>
-                    @if(!$isViewingOther)
-                    <div class="pt-2 border-t border-slate-100 flex justify-end">
-                        <a href="{{ route('harian', ['tanggal' => $day->tanggal->toDateString()]) }}" 
-                           class="text-blue-600 hover:text-blue-800 text-xs font-semibold inline-flex items-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"></path></svg>
-                            <span>Buka / Edit</span>
-                        </a>
-                    </div>
-                    @endif
-                </div>
-                @empty
-                <div class="text-center py-6 text-slate-400 text-sm">
-                    Belum ada rincian pengerjaan harian.
-                </div>
-                @endforelse
             </div>
         </div>
 

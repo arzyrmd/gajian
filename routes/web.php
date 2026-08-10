@@ -4,13 +4,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyCalculatorController;
 use App\Http\Controllers\MonthlyCalculatorController;
 use App\Http\Controllers\TarifController;
+use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    if (Illuminate\Support\Facades\Auth::check() && Illuminate\Support\Facades\Auth::user()->is_admin) {
-        return redirect()->route('monitoring');
+    if (Auth::check()) {
+        return Auth::user()->is_admin 
+            ? redirect()->route('monitoring.index') 
+            : redirect()->route('harian');
     }
-    return redirect()->route('harian');
+    return redirect()->route('login');
 });
 
 // Guest Authentication Routes
@@ -25,20 +30,32 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Daily Tab
-    Route::get('/harian', [DailyCalculatorController::class, 'index'])->name('harian');
-    Route::post('/harian', [DailyCalculatorController::class, 'store'])->name('harian.store');
+    // Technician-only Routes
+    Route::middleware('technician')->group(function () {
+        // Daily Tab
+        Route::get('/harian', [DailyCalculatorController::class, 'index'])->name('harian');
+        Route::post('/harian', [DailyCalculatorController::class, 'store'])->name('harian.store');
 
-    // Monthly Tab
-    Route::get('/bulanan', [MonthlyCalculatorController::class, 'index'])->name('bulanan');
-    Route::get('/bulanan/export', [MonthlyCalculatorController::class, 'exportCsv'])->name('bulanan.export');
+        // Monthly Tab
+        Route::get('/bulanan', [MonthlyCalculatorController::class, 'index'])->name('bulanan');
+        Route::get('/bulanan/export', [MonthlyCalculatorController::class, 'exportCsv'])->name('bulanan.export');
+    });
 
-    // Tarif Configuration
-    Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
-    Route::post('/tarif', [TarifController::class, 'update'])->name('tarif.update');
+    // Admin-only Routes
+    Route::middleware('admin')->group(function () {
+        // Salary Monitoring
+        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::get('/monitoring/{user}', [MonitoringController::class, 'show'])->name('monitoring.show');
 
-    // Monitoring Tab (Admin Only)
-    Route::get('/monitoring', [MonthlyCalculatorController::class, 'monitoring'])->name('monitoring');
+        // Tarif Configuration
+        Route::get('/tarif', [TarifController::class, 'index'])->name('tarif.index');
+        Route::post('/tarif', [TarifController::class, 'update'])->name('tarif.update');
+
+        // User Management
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users/{user}/toggle-role', [UserController::class, 'toggleRole'])->name('users.toggle-role');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
 });
 
 Route::get('/php-info', function () {

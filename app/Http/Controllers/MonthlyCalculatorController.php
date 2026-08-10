@@ -17,18 +17,6 @@ class MonthlyCalculatorController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
-        $isViewingOther = false;
-        $targetUser = Auth::user();
-
-        if (Auth::user()->is_admin) {
-            if ($request->has('user_id')) {
-                $userId = (int) $request->input('user_id');
-                $isViewingOther = true;
-                $targetUser = \App\Models\User::findOrFail($userId);
-            } else {
-                return redirect()->route('monitoring');
-            }
-        }
 
         // Defaults to current month and year
         $month = (int) $request->input('month', Carbon::now()->month);
@@ -120,8 +108,6 @@ class MonthlyCalculatorController extends Controller
             'selectedYear' => $year,
             'years' => $years,
             'months' => $months,
-            'isViewingOther' => $isViewingOther,
-            'targetUser' => $targetUser,
         ]);
     }
 
@@ -132,10 +118,6 @@ class MonthlyCalculatorController extends Controller
     {
         $userId = Auth::id();
         $user = Auth::user();
-        if (Auth::user()->is_admin && $request->has('user_id')) {
-            $userId = (int) $request->input('user_id');
-            $user = \App\Models\User::findOrFail($userId);
-        }
         $month = (int) $request->input('month', Carbon::now()->month);
         $year = (int) $request->input('year', Carbon::now()->year);
 
@@ -253,69 +235,5 @@ class MonthlyCalculatorController extends Controller
         };
 
         return new StreamedResponse($callback, 200, $headers);
-    }
-
-    /**
-     * Display a list of all technicians and their salaries for monitoring (Admin Only).
-     */
-    public function monitoring(Request $request)
-    {
-        // Require administrator role
-        if (!Auth::user()->is_admin) {
-            return redirect()->route('harian')->with('error', 'Hanya administrator yang dapat memonitoring gaji teknisi.');
-        }
-
-        // Defaults to current month and year
-        $month = (int) $request->input('month', Carbon::now()->month);
-        $year = (int) $request->input('year', Carbon::now()->year);
-
-        // Fetch all technicians (users who are NOT admin)
-        $technicians = \App\Models\User::where('is_admin', false)->orderBy('name', 'asc')->get();
-
-        // Calculate total jobs and salaries for each technician for the selected month/year
-        $salaries = PekerjaanHarian::join('kategori_tarif', 'pekerjaan_harian.kategori_tarif_id', '=', 'kategori_tarif.id')
-            ->whereYear('pekerjaan_harian.tanggal', $year)
-            ->whereMonth('pekerjaan_harian.tanggal', $month)
-            ->groupBy('pekerjaan_harian.user_id')
-            ->selectRaw('
-                pekerjaan_harian.user_id,
-                SUM(jumlah_berhasil) as total_berhasil,
-                SUM(jumlah_gagal) as total_gagal,
-                SUM(jumlah_berhasil + jumlah_gagal) as total_pekerjaan,
-                SUM((jumlah_berhasil * tarif_berhasil) + (jumlah_gagal * tarif_gagal)) as total_gaji
-            ')
-            ->get()
-            ->keyBy('user_id');
-
-        $data = $technicians->map(function ($tech) use ($salaries) {
-            $techSalary = $salaries->get($tech->id);
-            return (object) [
-                'id' => $tech->id,
-                'name' => $tech->name,
-                'email' => $tech->email,
-                'total_berhasil' => $techSalary ? (int) $techSalary->total_berhasil : 0,
-                'total_gagal' => $techSalary ? (int) $techSalary->total_gagal : 0,
-                'total_pekerjaan' => $techSalary ? (int) $techSalary->total_pekerjaan : 0,
-                'total_gaji' => $techSalary ? (int) $techSalary->total_gaji : 0,
-            ];
-        });
-
-        // Generate years list
-        $currentYear = Carbon::now()->year;
-        $years = range($currentYear - 3, $currentYear + 2);
-
-        // Generate months list
-        $months = [];
-        for ($m = 1; $m <= 12; $m++) {
-            $months[$m] = Carbon::create(null, $m, 1)->translatedFormat('F');
-        }
-
-        return view('monitoring.index', [
-            'data' => $data,
-            'selectedMonth' => $month,
-            'selectedYear' => $year,
-            'years' => $years,
-            'months' => $months,
-        ]);
     }
 }
